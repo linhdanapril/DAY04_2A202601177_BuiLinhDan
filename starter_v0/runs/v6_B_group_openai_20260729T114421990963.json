@@ -1,0 +1,697 @@
+{
+  "run_id": "v6_B_group_openai_20260729T114421990963",
+  "version": "v6",
+  "artifact_version": "v6+p213a34c7f36e+t33cb88dcd4a4",
+  "prompt_hash": "213a34c7f36ed67f2099d38877551be33cb9bf153327f2a27d4d7a061154aa03",
+  "tools_hash": "33cb88dcd4a49e272f86517dddd611375c3ef9eb743f1c1ba88a037cb2e83406",
+  "phase": "B",
+  "suite": "group",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "system_prompt": "F:\\VinAI\\lab4\\DAY04_2A202601177_BuiLinhDan\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "F:\\VinAI\\lab4\\DAY04_2A202601177_BuiLinhDan\\starter_v0\\artifacts\\tools.yaml",
+  "eval_cases": "data\\eval_group.json",
+  "dataset_id": "day04_v2_research_group",
+  "dataset_role": "group",
+  "description": "10 case do nhóm BuiLinhDan tự thiết kế: 5 single-turn và 5 multi-turn, tập trung vào ranh giới xác nhận của tool export mới và các convention argument của lookup/social_search.",
+  "generated_at": "2026-07-29T11:44:21",
+  "summary": {
+    "total_cases": 10,
+    "measured_cases": 10,
+    "provider_error_cases": 0,
+    "passed_cases": 10,
+    "case_accuracy": 1.0,
+    "tool_routing_accuracy": 1.0,
+    "argument_accuracy": 1.0,
+    "multiturn_accuracy": 1.0,
+    "failure_counts": {},
+    "observed_mismatch_counts": {}
+  },
+  "results": [
+    {
+      "id": "G01_export_needs_confirmation",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Action tool ghi file phải gọi lần đầu với confirmed=false để người dùng duyệt, không được ghi ngay."
+      },
+      "input": "Lưu digest này ra file giúp mình: # Tin AI hôm nay - OpenAI ra model mới",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "export",
+            "args": {
+              "confirmed": false
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "export",
+            "args": {
+              "content": "# Tin AI hôm nay - OpenAI ra model mới",
+              "filename": "tin-ai-hom-nay-openai-ra-model-moi",
+              "confirmed": false
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "export",
+          "args": {
+            "content": "# Tin AI hôm nay - OpenAI ra model mới",
+            "filename": "tin-ai-hom-nay-openai-ra-model-moi",
+            "confirmed": false
+          },
+          "result": {
+            "tool": "save_digest",
+            "status": "needs_confirmation",
+            "message": "Only write the file after the user explicitly confirms.",
+            "preview": "# Tin AI hôm nay - OpenAI ra model mới"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G02_export_not_send",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Phân biệt export (ghi file local) với send (gửi ra kênh ngoài) khi người dùng nói rõ không gửi đi."
+      },
+      "input": "Lưu bản tin này xuống máy thôi, đừng gửi đi đâu cả: # Tổng hợp AI",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "export",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "export",
+            "args": {
+              "content": "# Tổng hợp AI",
+              "filename": "tong_hop_ai",
+              "confirmed": false
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "export",
+          "args": {
+            "content": "# Tổng hợp AI",
+            "filename": "tong_hop_ai",
+            "confirmed": false
+          },
+          "result": {
+            "tool": "save_digest",
+            "status": "needs_confirmation",
+            "message": "Only write the file after the user explicitly confirms.",
+            "preview": "# Tổng hợp AI"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G03_lookup_timeframe_month",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Convention argument: query chỉ chứa từ khóa, topic=news khi hỏi tin tức, timeframe khớp 'tháng này' thành month."
+      },
+      "input": "Tìm tin về fintech trong tháng này",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "fintech",
+              "topic": "news",
+              "timeframe": "month"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "fintech",
+              "topic": "news",
+              "timeframe": "month",
+              "max_results": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "fintech",
+            "topic": "news",
+            "timeframe": "month",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "fintech",
+            "topic": "news",
+            "timeframe": "month",
+            "items": [
+              {
+                "title": "Fintech-for-good Lightning Reach sold to ETG - FinTech Futures",
+                "url": "https://www.fintechfutures.com/m-a/lightning-reach-acquired-by-european-technology-group",
+                "source": "fintechfutures.com",
+                "summary": "FinTech Futures is part of the Informa Festivals Division of Informa PLC. Informa PLC|ABOUT US|INVESTOR RELATIONS|TALENT. This site is operated by a business or businesses owned by Informa PLC and all copyright resides with them. Informa PLC's registered office is 5 Howick Place, London SW1P 1WG. Image 4: Lightning Reach - FinTech NewsM&A. Image 5: Augustus - FinTech NewsVenture Capital Funding. Image 6: Agentic AI - fintech newsAI in Fintech. Leadership in the age of agentic finance. Image 7: Ant International - FinTech NewsVenture Capital Funding. Image 9: Mors Software - FinTech NewsM&A. Lightning Reach, a UK fintech platform designed to help connect consumers in financial hardship with personalised support, has been acquired by private equity firm European Technology Group (ETG). Related:AngelList acquires fund management software platform Ark. Yi Hooi, a former product director at Railsr, previously featured on series one episode seven of FinTech Futures' FinTech Founders Video Series, where she spoke openly about the company's relationship with its investors.",
+                "score": 0.5357549
+              },
+              {
+                "title": "Stablecoins are handing fintechs a new monetisation model - FinTech Futures",
+                "url": "https://www.fintechfutures.com/blockchain-crypto-digital-assets/stablecoins-are-handing-fintechs-a-new-monetisation-model-if-they-ask-the-right-questions",
+                "source": "fintechfutures.com",
+                "summary": "FinTech Futures is part of the Informa Festivals Division of Informa PLC. Informa PLC|ABOUT US|INVESTOR RELATIONS|TALENT. This site is operated by a business or businesses owned by Informa PLC and all copyright resides with them. Informa PLC's registered office is 5 Howick Place, London SW1P 1WG. FinTech Futures: Top five news stories of the week – 10 July 2026FinTech Futures: Top five news stories of the week – 10 July 2026. ICYMI fintech funding round-up: Aria, Kord, Stoa, and moreICYMI fintech funding round-up: Aria, Kord, Stoa, and more. Image 10: Tangos - FinTech News.png? A new class of yield-bearing products is enabling fintech platforms to offer customers potential returns on their balances. Image 17: Maple Finance - fintech news. The platforms that treat provenance as a feature – that can point to a borrower, a loan, and a defined piece of collateral, and let anyone check the work – will have a reason for customers to stay that has nothing to do with price.",
+                "score": 0.5046147
+              },
+              {
+                "title": "Cartoon: Big business - FinTech Futures",
+                "url": "https://www.fintechfutures.com/ai-in-fintech/cartoon-big-business",
+                "source": "fintechfutures.com",
+                "summary": "FinTech Futures is part of the Informa Festivals Division of Informa PLC. Informa PLC|ABOUT US|INVESTOR RELATIONS|TALENT. This site is operated by a business or businesses owned by Informa PLC and all copyright resides with them. Informa PLC's registered office is 5 Howick Place, London SW1P 1WG. Registered in England and Wales. Image 3: Iantoons - fintech newsAI in Fintech. Image 4: Banking Tech Awards - fintech news.png? Image 7: Worldline - FinTech NewsM&A. Image 9: Spiros Giannaros, Gresham - FinTech News.png? Image 11: FNZ - FinTech NewsM&A. This new cartoon illustrates that small businesses are proving to be the early winners of getting value from AI. Image 16: Iantoons - fintech news. ## Choose FinTech Futures as a 'Preferred Source' to get quicker access to the fintech news you value. Informa PLC is registered in England and Wales with company number 8860726 whose registered and head office is 5 Howick Place, London, SW1P 1WG.",
+                "score": 0.4767995
+              },
+              {
+                "title": "Ctrl Alt secures MiFID licence to launch tokenised services in Europe - FinTech Futures",
+                "url": "https://www.fintechfutures.com/regulatory-actions/ctrl-alt-secures-mifid-licence-to-launch-tokenised-services-across-europe",
+                "source": "fintechfutures.com",
+                "summary": "FinTech Futures is part of the Informa Festivals Division of Informa PLC. Informa PLC|ABOUT US|INVESTOR RELATIONS|TALENT. This site is operated by a business or businesses owned by Informa PLC and all copyright resides with them. Informa PLC's registered office is 5 Howick Place, London SW1P 1WG. Webinar | 13 August 2026 | Fintech investment in 2026: Where VCs are placing their betsWebinar | 13 August 2026 | Fintech investment in 2026: Where VCs are placing their bets. Image 9: Mors Software - FinTech NewsM&A. Image 10: Bybit - FinTech News.png? Image 11: Lightning Reach - FinTech NewsM&A. Image 16: Ctrl Alt - FinTech News.png? Francis Bignell is a reporter at FinTech Futures with a keen interest in all things fintech, especially in the Latin America region. width=1280&auto=webp&quality=80&disable=upscale) #### Confirmo bolsters European stablecoin solution with payment institution licence in Ireland by Francis Bignell Apr 10, 2026.",
+                "score": 0.46410054
+              },
+              {
+                "title": "Nubank promotes Livia Chanes to Latin America CEO - FinTech Futures",
+                "url": "https://www.fintechfutures.com/job-cuts-new-hires/nubank-promotes-livia-chanes-to-latin-america-ceo",
+                "source": "fintechfutures.com",
+                "summary": "FinTech Futures is part of the Informa Festivals Division of Informa PLC. Informa PLC|ABOUT US|INVESTOR RELATIONS|TALENT. This site is operated by a business or businesses owned by Informa PLC and all copyright resides with them. Informa PLC's registered office is 5 Howick Place, London SW1P 1WG. Image 4: Strata Decision Technology - FinTech NewsM&A. Always.bank launches full suite of digital business banking services across the USAlways.bank launches full suite of digital business banking services across the US. Image 6: Standard Chartered - FinTech NewsCloud Services. Image 7: MoonPay - FinTech NewsM&A. Image 9: Fourthline and Veridas - FinTech NewsM&A. Image 14: ConnectOne Bank - FinTech NewsAI in Fintech. Chanes' expanded remit comes hot on the heels of Nu Mexico's recent authorisation to operate as a bank in the country. Cameron Emanuel-Burns, a reporter at FinTech Futures, is dedicated to enhancing the accessibility of fintech for a broader audience.",
+                "score": 0.46322632
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G04_out_of_scope_translate",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Dịch thuật nằm ngoài phạm vi research; agent phải trả lời trực tiếp, không gọi tool nào."
+      },
+      "input": "Dịch câu 'good morning' sang tiếng Nhật giúp mình",
+      "expect": {
+        "no_tool": true
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Câu \"good morning\" trong tiếng Nhật là \"おはようございます\" (ohayou gozaimasu).",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "G05_export_missing_content",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Thiếu nội dung cần lưu thì phải hỏi lại bằng clarify text, không được bịa nội dung rồi ghi file."
+      },
+      "input": "Lưu cái này ra file giúp mình",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn muốn lưu nội dung gì vào file?",
+              "response_type": "text"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn muốn lưu nội dung gì vào file?",
+            "response_type": "text"
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn muốn lưu nội dung gì vào file?",
+            "response_type": "text",
+            "options": [],
+            "awaiting_user": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "G06_multiturn_social_top",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Multi-turn: giữ query từ lượt 1 và map 'phổ biến nhất' thành search_type=Top ở lượt 2."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm giúp mình các bài đăng trên X về AI"
+        },
+        {
+          "role": "user",
+          "content": "Sắp xếp theo phổ biến nhất nhé"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "AI",
+              "search_type": "Top"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "AI",
+              "search_type": "Top"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "social_search",
+          "args": {
+            "query": "AI",
+            "search_type": "Top"
+          },
+          "result": {
+            "tool": "search_tweets",
+            "query": "AI",
+            "search_type": "Top",
+            "items": [
+              {
+                "title": "this creator just built a zero-delay auto-aim system on an $8 microcontroller",
+                "summary": "this creator just built a zero-delay auto-aim system on an $8 microcontroller\n\nhe deployed a custom local AI algorithm on a cheap ESP-32 to track human movement with absolute 0-pixel accuracy.\n\nthe system completely eliminates standard computation delay. it processes the bounding box and moves the sniper reticle instantly, locking onto the target in real time. the next step is hooking it up to a physical robotic arm.\n\nit proves you don't need a massive GPU rig to run complex computer vision.\n\n1. runs locally on a microcontroller\n2. local AI inference for zero latency\n3. 100% targeting precision\n\nwhen an eight-dollar chip can track movement with zero latency, AI becomes dangerous local infrastructure. this article breaks down exactly how the ESP-32 is powering this physical hardware shift.",
+                "url": "https://x.com/ardchain/status/2082022516466577474",
+                "source": "@ardchain",
+                "date": "Tue Jul 28 08:37:04 +0000 2026",
+                "metrics": {
+                  "favorites": 3274,
+                  "retweets": 307,
+                  "views": "599326"
+                }
+              },
+              {
+                "title": "A 22-year-old makes $30,000 a month from children’s videos without ever showing his face or drawing a single frame.",
+                "summary": "A 22-year-old makes $30,000 a month from children’s videos without ever showing his face or drawing a single frame.\n\nHis younger brother watches the channel at breakfast without knowing who owns it.\n\nOne morning, the same episode played three times. The boy kept restarting it for the song and the familiar character. His brother sat across the table watching the exact replay loop that built the business.\n\nHe never begins with a blank page. He finds children’s videos that already earned millions of views and gives Claude the transcript and visual structure.\n\nClaude extracts the mechanics without copying the story: song structure, character rhythm, scene pacing, opening hook and bright visual pattern. Then it writes an original episode around the same recurring hero used across his entire channel.\n\nAI generates the voice and animation. He approves the episode and publishes it without drawing, filming or appearing on camera.\n\nThe $30,000 does not come from one viral cartoon. It comes from a growing library children recognize and replay while parents get a few quiet minutes.\n\nHis younger brother sees a cartoon.\n\nYouTube sees repeat viewing.\n\nHe sees an asset that compounds every morning.",
+                "url": "https://x.com/woody_research/status/2081457064354906546",
+                "source": "@woody_research",
+                "date": "Sun Jul 26 19:10:10 +0000 2026",
+                "metrics": {
+                  "favorites": 2010,
+                  "retweets": 333,
+                  "views": "185093"
+                }
+              },
+              {
+                "title": "A 23-YEAR-OLD STUDENT BUILT THIS WORLD WAR II FILM IN JUST ONE NIGHT AND WON THE $1,000,000 BEST AI FILM OF 2026 AWARD",
+                "summary": "A 23-YEAR-OLD STUDENT BUILT THIS WORLD WAR II FILM IN JUST ONE NIGHT AND WON THE $1,000,000 BEST AI FILM OF 2026 AWARD\n\nThis terrifyingly realistic trench battle was created during a single all-nighter.\n\nBypassing multimillion-dollar studio budgets and turning a 23-year-old student into an instant millionaire before sunrise.\n\n> Claude write the tragic World War II story arc & shot list: 20 minutes\n\n> Midjourney render 8K photorealistic trench combat assets: 1 hour\n\n> Sora / Runway turn static battlefield stills into 60fps action: 3 hours\n\n> ElevenLabs overlay cinematic artillery blasts and voice tracks: 30 minutes\n\nHollywood spends $150M and 2 years to shoot this level of cinematic chaos. \n\nA student did it in under 8 hours for less than fifty bucks.\n\nThe entire 1-night $1M AI filmmaking framework is broken down in the article below👇",
+                "url": "https://x.com/doublenickk/status/2080348488789860719",
+                "source": "@doublenickk",
+                "date": "Thu Jul 23 17:45:05 +0000 2026",
+                "metrics": {
+                  "favorites": 3488,
+                  "retweets": 573,
+                  "views": "822318"
+                }
+              },
+              {
+                "title": "Anthropic engineer:",
+                "summary": "Anthropic engineer:\n\n\"You're not supposed to prompt Claude. You're supposed to build a system that prompts itself.\"\n\nIn 45 minutes she shows exactly how Anthropic builds agents that remember, fix their own mistakes and get smarter with every run.\n\nThis beats any paid course on agents I've seen.\n\nWatch it, then read the guide on building loops below.",
+                "url": "https://x.com/AnatoliKopadze/status/2080286550005358977",
+                "source": "@AnatoliKopadze",
+                "date": "Thu Jul 23 13:38:58 +0000 2026",
+                "metrics": {
+                  "favorites": 8808,
+                  "retweets": 1196,
+                  "views": "2063327"
+                }
+              },
+              {
+                "title": "this is f**king insane",
+                "summary": "this is f**king insane\n\na free github repo by Jack Dorsey (Co-Founder of Twitter) with 14.4K stars just dropped the entire \"ai-agent\" framework for running businesses\n\nhere is how you set it up:\n\n1.clone the repo\n2. self-host the server : channels, search, git, automation all live there\n3.add your agent to a channel like a teammate, scope its key, let the team steer it live\n\nsave and bookmark this no matter what",
+                "url": "https://x.com/Av1dlive/status/2082039763511673129",
+                "source": "@Av1dlive",
+                "date": "Tue Jul 28 09:45:36 +0000 2026",
+                "metrics": {
+                  "favorites": 1495,
+                  "retweets": 183,
+                  "views": "237903"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G07_multiturn_correct_timeframe",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Multi-turn: nhận đính chính timeframe từ week sang month, không giữ giá trị cũ."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm tin AI trong tuần này"
+        },
+        {
+          "role": "user",
+          "content": "Nhầm rồi, mình cần tin trong tháng này cơ"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "AI",
+              "topic": "news",
+              "timeframe": "month"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "AI",
+              "topic": "news",
+              "timeframe": "month",
+              "max_results": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "AI",
+            "topic": "news",
+            "timeframe": "month",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "AI",
+            "topic": "news",
+            "timeframe": "month",
+            "items": [
+              {
+                "title": "How AI Is Rewriting Human Nature",
+                "url": "https://www.noemamag.com/how-ai-is-rewriting-human-nature",
+                "source": "noemamag.com",
+                "summary": "But the promise of AI for science — from mapping human proteins to maximizing the benefits of sleep, diet and exercise — makes increases in longevity a plausible goal. This generation of humans might actually be able to biohack its way into longer lives. Scientists are ramping up their explorations of brain-computer interfaces (BCIs) — systems that use AI to turn brain signals into artificial outputs — hoping to eventually upload human consciousness and experience into an eternal digital [...] America built its civilization around the idea of the individual and a temporary configuration sustained by cheap energy, an unrivaled defense force and manageable technology. Call that configuration “the American middle class” for short: the house and the yard, the car, the aspirations to self-improvement. As AI, biotech and planetary-scale systems advance, that configuration starts to melt. The individual — as a philosophical concept within the history of the Western Enlightenment — is [...] This trend began decades ago, long before the rise of AI, of course. But AI and computation, and the slow shift from the world of the industrial revolution into the world of the information revolution, has been a long time coming in societies like the United States. In China and India, where AI has arrived more rapidly, the birthrates have declined more rapidly, too. Is there something about AI or modern technology in general that makes people less willing to have children?",
+                "score": 0.4098117
+              },
+              {
+                "title": "Opinion | If You're Over 40, You're Ready to Use A.I.",
+                "url": "https://www.nytimes.com/2026/07/27/opinion/teaching-kabbalah-ai.html",
+                "source": "nytimes.com",
+                "summary": "Despite the agreement they signed and several serious reminders, we suspected that some students had indeed used A.I. in place of their own original writing. When we asked, they squirmed and then admitted they had used A.I. to augment and synthesize their writing. I found their use of the word “augment” especially revealing because it allowed the act to appear smaller than it was; it made the intervention of A.I. in their work sound cosmetic and clerical, when what was actually being altered [...] being altered was the student’s relationship to struggle, authorship and accountability. [...] We reminded them of these rules again at the beginning of the thesis process, because the thesis is not simply a deliverable or an exercise in presentation, but the place where their thinking is supposed to become visible. Because brand strategy is so dependent on the compelling communication of ideas, this is the part of the program in which students have to wrestle with language, evidence, doubt and the responsibility of making an argument they can confidently stand behind and defend.",
+                "score": 0.31738445
+              },
+              {
+                "title": "Global leaders launch AI for Good Global Commission - Salesforce",
+                "url": "https://www.salesforce.com/news/press-releases/2026/07/02/ai-for-good-global-commission-announcement",
+                "source": "salesforce.com",
+                "summary": "“The promise of AI is built on not only incredible opportunities for the growth of our economy, but on the foundation of trust that is required for our shared success,” said Benioff, Commission Co-Chair.\n\nWith 2.2 billion people still offline, one-quarter of the world is cut off from AI advancements. A key focus of the AI for Good Global Commission will be to bridge digital divides and help ensure that AI becomes a tool for solving global challenges, not deepening inequalities. [...] The newly formed Commission occupies a unique position in the global AI landscape. By connecting leaders who build technology, deploy it at scale, shape policy and represent communities, the Commission seeks to help forge responsible AI solutions across sectors and borders while ensuring the participation of developing countries.",
+                "score": 0.3132732
+              },
+              {
+                "title": "What Americans think about the global AI race",
+                "url": "https://www.pewresearch.org/short-reads/2026/07/23/what-americans-think-about-the-global-ai-race",
+                "source": "pewresearch.org",
+                "summary": "Democrats are more likely than Republicans to say AI will increase inequality (60% vs. 45%). Americans with a bachelor’s degree are also more likely than those without one to think the gap between countries will widen (62% vs. 46%).\n\nAnd Americans who use AI chatbots are more likely than those who don’t use them to say this (55% vs. 47%).\n\nNote: Here are our survey questions for this analysis, the detailed responses and the survey methodology.\n\nTopics\n\n Artificial Intelligence",
+                "score": 0.2808584
+              },
+              {
+                "title": "The New (And Slightly Smelly) Center of the AI Boom",
+                "url": "https://www.theatlantic.com/technology/2026/06/hacker-houses-ai-boom-san-francisco/687737",
+                "source": "theatlantic.com",
+                "summary": "On my second evening at the house, I lounged in the backyard with Morgan and Santiago, surrounded by lawn furniture and a rusting barbell. It was a typical San Francisco evening: sitting outdoors to sip ginger beer, munch on sour-cream-and-onion Pringles, and talk about how AI is warping the world. [...] Adams and most of my other housemates were in or around their 30s. Kai Song Eer and Jay Yen Lim, who had just moved here from another hacker house in San Francisco, were building an AI agent to automate sales calls. On my first day, they offered me some (delightful) roasted oolong brought from Malaysia. Alan VanToai, whose room was on my floor, had an awakening to the potential of AI about a year ago when taking a psychedelic. He had recently vibe coded an AI-guided-meditation app. [...] Tigran Voskanyan, who was staying in Accelr8’s hotel, is developing an AI assistant that, he told me, centralizes your media, allowing you to access Spotify, Telegram, and so on in one place. Voskanyan asked me to pull out my iPhone and load his website so he could show me the program. This proved much slower than just opening my music app, and the bot had some voice-recognition difficulties. As I put my phone away, Voskanyan explained that his prototype is in its early stages, and he’s still",
+                "score": 0.27489534
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G08_multiturn_user_cancels",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Người dùng đã hủy yêu cầu ở lượt 2; lượt cuối chỉ là lời cảm ơn nên không được gọi tool."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm tin về blockchain giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Thôi khỏi, mình tự tìm được rồi"
+        },
+        {
+          "role": "user",
+          "content": "Cảm ơn bạn nhé"
+        }
+      ],
+      "expect": {
+        "no_tool": true
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Không có gì! Nếu bạn cần thêm thông tin hay hỗ trợ gì khác, đừng ngần ngại hỏi nhé!",
+        "case_failure_type": "unnecessary_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "G09_multiturn_export_confirmed",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Sau khi người dùng xác nhận rõ ràng ở lượt 2 thì mới được gọi export với confirmed=true."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Lưu digest này ra file: # Tin AI hôm nay - OpenAI ra model mới"
+        },
+        {
+          "role": "user",
+          "content": "Ừ mình xác nhận, lưu đi"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "export",
+            "args": {
+              "confirmed": true
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "export",
+            "args": {
+              "content": "# Tin AI hôm nay - OpenAI ra model mới",
+              "filename": "tin-ai-hom-nay-openai-ra-model-moi",
+              "confirmed": true
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "export",
+          "args": {
+            "content": "# Tin AI hôm nay - OpenAI ra model mới",
+            "filename": "tin-ai-hom-nay-openai-ra-model-moi",
+            "confirmed": true
+          },
+          "result": {
+            "tool": "save_digest",
+            "status": "saved",
+            "path": "exports\\tin-ai-hom-nay-openai-ra-model-moi_20260729T114417.md",
+            "chars_written": 38
+          }
+        }
+      ]
+    },
+    {
+      "id": "G10_multiturn_out_of_scope_math",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Lượt cuối là yêu cầu toán ngoài phạm vi, dù lượt trước là research hợp lệ; chỉ lượt cuối được chấm."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm tin AI hôm nay giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Tiện thể giải giúp mình phương trình x^2 - 5x + 6 = 0"
+        }
+      ],
+      "expect": {
+        "no_tool": true
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Phương trình bậc hai \\(x^2 - 5x + 6 = 0\\) có thể giải bằng cách sử dụng công thức nghiệm:\n\n\\[\nx = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}\n\\]\n\nTrong đó, \\(a = 1\\), \\(b = -5\\), và \\(c = 6\\).\n\n1. Tính delta (\\(D\\)):\n   \\[\n   D = b^2 - 4ac = (-5)^2 - 4 \\cdot 1 \\cdot 6 = 25 - 24 = 1\n   \\]\n\n2. Tính nghiệm:\n   \\[\n   x = \\frac{5 \\pm \\sqrt{1}}{2 \\cdot 1} = \\frac{5 \\pm 1}{2}\n   \\]\n\n   - Nghiệm 1: \\(x_1 = \\frac{6}{2} = 3\\)\n   - Nghiệm 2: \\(x_2 = \\frac{4}{2} = 2\\)\n\nVậy phương trình có hai nghiệm: \\(x_1 = 3\\) và \\(x_2 = 2\\).",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    }
+  ]
+}

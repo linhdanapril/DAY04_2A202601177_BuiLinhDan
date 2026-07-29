@@ -111,6 +111,86 @@ tools:
         template: {type: string, enum: [brief, sections, bullets, thread, daily_ai_vn], default: "sections", description: "Khuôn"}
         headline: {type: string, default: "", description: "Tiêu đề"}
       required: [items, template]
+  
+  - name: export
+    description: >-
+      Lưu một digest markdown đã có sẵn thành file trong thư mục exports/ trên máy
+      local. Chỉ dùng khi nội dung digest đã tồn tại — tool này không tự tìm dữ liệu
+      và không tự trình bày. Luôn gọi lần đầu với confirmed=false để người dùng duyệt
+      nội dung; chỉ gọi lại với confirmed=true sau khi người dùng đồng ý rõ ràng.
+    parameters:
+      type: object
+      properties:
+        content:
+          type: string
+          default: ""
+          description: "Toàn bộ nội dung markdown cần ghi ra file."
+        filename:
+          type: string
+          default: "digest"
+          description: "Tên file, không cần đuôi; ký tự lạ sẽ được thay bằng dấu gạch ngang."
+        confirmed:
+          type: boolean
+          default: false
+          description: "Chỉ đặt true sau khi người dùng đã xác nhận rõ ràng. Lần gọi đầu luôn để false."
+      required: [content]
+  
+    - name: cite_check
+    description: >-
+      Kiểm tra danh sách item đã thu thập có tuân thủ chính sách trích dẫn nội bộ
+      không: mỗi item phải có url và source, và item Tier 3 (bài đăng mạng xã hội)
+      phải được gắn nhãn chưa xác minh. Dùng trước khi format hoặc chia sẻ digest.
+      Không tự tìm dữ liệu — chỉ soi các item được truyền vào.
+    parameters:
+      type: object
+      properties:
+        items:
+          type: array
+          default: []
+          description: "Danh sách item cần kiểm tra."
+          items:
+            type: object
+            properties:
+              title: {type: string}
+              url: {type: string}
+              source: {type: string}
+              summary: {type: string}
+        strict:
+          type: boolean
+          default: false
+          description: "Bật true để loại thẳng mọi item Tier 3 thay vì chỉ cảnh báo."
+      required: [items]
+
+  - name: select_items
+    description: >-
+      Dừng lại và để người dùng tự chọn giữ lại item nào trong danh sách đã tìm
+      được. Dùng khi kết quả có nhiều mục và cần con người quyết định nội dung nào
+      vào digest. Khác clarify: clarify hỏi thông tin còn thiếu, còn select_items
+      trình bày thông tin đã có để người dùng chọn.
+    parameters:
+      type: object
+      properties:
+        items:
+          type: array
+          default: []
+          description: "Danh sách item để người dùng chọn."
+          items:
+            type: object
+            properties:
+              title: {type: string}
+              url: {type: string}
+              source: {type: string}
+              summary: {type: string}
+        question:
+          type: string
+          default: ""
+          description: "Câu hỏi hiển thị phía trên danh sách."
+        allow_multiple:
+          type: boolean
+          default: true
+          description: "Cho phép chọn nhiều mục hay chỉ một."
+      required: [items]
+
 
   # ---------------- Bonus tools ----------------
   - name: send

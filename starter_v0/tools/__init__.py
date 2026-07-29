@@ -18,6 +18,11 @@ from .social_search.tool import search_tweets
 from .send.tool import send_telegram
 from .lookup.tool import web_search
 
+from .export.tool import save_digest
+from .cite_check.tool import check_citations
+from .select_items.tool import request_item_selection
+
+
 
 # NOTE (starter_v0): tool names here are intentionally vague. These keys are the
 # names the model sees AND the names data/eval_base.json + data/eval_research_extension.json
@@ -35,6 +40,9 @@ TOOL_FUNCTIONS = {
     "policy": search_company_policy,
     "papers": arxiv_search,
     "paper_text": get_arxiv_paper_text,
+    "export": save_digest,
+        "cite_check": check_citations,
+    "select_items": request_item_selection,
 }
 
 

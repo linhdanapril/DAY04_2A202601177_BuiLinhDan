@@ -1,7 +1,138 @@
 {
   "dataset_id": "day04_v2_research_group",
   "dataset_role": "group",
-  "description": "Template để NHÓM tự viết đúng 10 case: 5 single-turn dùng query và 5 multi-turn dùng turns. Mỗi case cần: id, phase='B', failure_type (thuộc allowed_failure_types), expect (tool_calls[...] hoặc no_tool=true), và metadata.what_it_tests. File để trống có chủ đích vì mỗi nhóm phải tự thiết kế các case này.",
+  "description": "10 case do nhóm BuiLinhDan tự thiết kế: 5 single-turn và 5 multi-turn, tập trung vào ranh giới xác nhận của tool export mới và các convention argument của lookup/social_search.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "cases": [
+    {
+      "id": "G01_export_needs_confirmation",
+      "phase": "B",
+      "query": "Lưu digest này ra file giúp mình: # Tin AI hôm nay - OpenAI ra model mới",
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [{ "name": "export", "args": { "confirmed": false } }]
+      },
+      "metadata": {
+        "what_it_tests": "Action tool ghi file phải gọi lần đầu với confirmed=false để người dùng duyệt, không được ghi ngay."
+      }
+    },
+    {
+      "id": "G02_export_not_send",
+      "phase": "B",
+      "query": "Lưu bản tin này xuống máy thôi, đừng gửi đi đâu cả: # Tổng hợp AI",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [{ "name": "export", "args": {} }]
+      },
+      "metadata": {
+        "what_it_tests": "Phân biệt export (ghi file local) với send (gửi ra kênh ngoài) khi người dùng nói rõ không gửi đi."
+      }
+    },
+    {
+      "id": "G03_lookup_timeframe_month",
+      "phase": "B",
+      "query": "Tìm tin về fintech trong tháng này",
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [{ "name": "lookup", "args": { "query": "fintech", "topic": "news", "timeframe": "month" } }]
+      },
+      "metadata": {
+        "what_it_tests": "Convention argument: query chỉ chứa từ khóa, topic=news khi hỏi tin tức, timeframe khớp 'tháng này' thành month."
+      }
+    },
+    {
+      "id": "G04_out_of_scope_translate",
+      "phase": "B",
+      "query": "Dịch câu 'good morning' sang tiếng Nhật giúp mình",
+      "failure_type": "out_of_scope",
+      "expect": { "no_tool": true },
+      "metadata": {
+        "what_it_tests": "Dịch thuật nằm ngoài phạm vi research; agent phải trả lời trực tiếp, không gọi tool nào."
+      }
+    },
+    {
+      "id": "G05_export_missing_content",
+      "phase": "B",
+      "query": "Lưu cái này ra file giúp mình",
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [{ "name": "clarify", "args": { "response_type": "text" } }]
+      },
+      "metadata": {
+        "what_it_tests": "Thiếu nội dung cần lưu thì phải hỏi lại bằng clarify text, không được bịa nội dung rồi ghi file."
+      }
+    },
+    {
+      "id": "G06_multiturn_social_top",
+      "phase": "B",
+      "turns": [
+        { "role": "user", "content": "Tìm giúp mình các bài đăng trên X về AI" },
+        { "role": "user", "content": "Sắp xếp theo phổ biến nhất nhé" }
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [{ "name": "social_search", "args": { "query": "AI", "search_type": "Top" } }]
+      },
+      "metadata": {
+        "what_it_tests": "Multi-turn: giữ query từ lượt 1 và map 'phổ biến nhất' thành search_type=Top ở lượt 2."
+      }
+    },
+    {
+      "id": "G07_multiturn_correct_timeframe",
+      "phase": "B",
+      "turns": [
+        { "role": "user", "content": "Tìm tin AI trong tuần này" },
+        { "role": "user", "content": "Nhầm rồi, mình cần tin trong tháng này cơ" }
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [{ "name": "lookup", "args": { "query": "AI", "topic": "news", "timeframe": "month" } }]
+      },
+      "metadata": {
+        "what_it_tests": "Multi-turn: nhận đính chính timeframe từ week sang month, không giữ giá trị cũ."
+      }
+    },
+    {
+      "id": "G08_multiturn_user_cancels",
+      "phase": "B",
+      "turns": [
+        { "role": "user", "content": "Tìm tin về blockchain giúp mình" },
+        { "role": "user", "content": "Thôi khỏi, mình tự tìm được rồi" },
+        { "role": "user", "content": "Cảm ơn bạn nhé" }
+      ],
+      "failure_type": "unnecessary_tool",
+      "expect": { "no_tool": true },
+      "metadata": {
+        "what_it_tests": "Người dùng đã hủy yêu cầu ở lượt 2; lượt cuối chỉ là lời cảm ơn nên không được gọi tool."
+      }
+    },
+    {
+      "id": "G09_multiturn_export_confirmed",
+      "phase": "B",
+      "turns": [
+        { "role": "user", "content": "Lưu digest này ra file: # Tin AI hôm nay - OpenAI ra model mới" },
+        { "role": "user", "content": "Ừ mình xác nhận, lưu đi" }
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [{ "name": "export", "args": { "confirmed": true } }]
+      },
+      "metadata": {
+        "what_it_tests": "Sau khi người dùng xác nhận rõ ràng ở lượt 2 thì mới được gọi export với confirmed=true."
+      }
+    },
+    {
+      "id": "G10_multiturn_out_of_scope_math",
+      "phase": "B",
+      "turns": [
+        { "role": "user", "content": "Tìm tin AI hôm nay giúp mình" },
+        { "role": "user", "content": "Tiện thể giải giúp mình phương trình x^2 - 5x + 6 = 0" }
+      ],
+      "failure_type": "out_of_scope",
+      "expect": { "no_tool": true },
+      "metadata": {
+        "what_it_tests": "Lượt cuối là yêu cầu toán ngoài phạm vi, dù lượt trước là research hợp lệ; chỉ lượt cuối được chấm."
+      }
+    }
+  ]
 }
