@@ -9,14 +9,31 @@
 tools:
   # ---------------- Core tools ----------------
   - name: clarify
-    description: "Gửi một câu hỏi cho người dùng."
+    description: >-
+      Hỏi lại người dùng và dừng cho tới lượt trả lời tiếp theo. Dùng khi (a) thiếu
+      một thông tin bắt buộc để gọi tool khác cho đúng, hoặc (b) cần xác nhận trước
+      một hành động gửi/đăng ra ngoài hội thoại. Luôn truyền response_type tường minh.
     parameters:
       type: object
       properties:
-        question: {type: string, default: "", description: "Câu hỏi"}
-        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "Kiểu trả lời"}
-        options: {type: array, default: [], items: {type: string}, description: "Các lựa chọn"}
-      required: [question]
+        question:
+          type: string
+          default: ""
+          description: "Câu hỏi ngắn, chỉ hỏi đúng một thứ đang thiếu."
+        response_type:
+          type: string
+          enum: [text, yes_no, choice]
+          default: "text"
+          description: >-
+            Bắt buộc truyền tường minh. Dùng "yes_no" khi xin xác nhận cho một hành
+            động (gửi, đăng, publish). Dùng "choice" khi đưa sẵn danh sách lựa chọn
+            trong options. Dùng "text" khi cần người dùng cung cấp một giá trị tự do.
+        options:
+          type: array
+          default: []
+          items: {type: string}
+          description: "Danh sách lựa chọn; chỉ dùng cùng response_type=choice."
+      required: [question, response_type]
 
   - name: timeline
     description: "Lấy các bài đăng gần đây."
@@ -28,24 +45,42 @@ tools:
       required: [screenname]
 
   - name: social_search
-    description: "Tìm trên mạng xã hội."
+    description: >-
+      Tìm bài đăng trên mạng xã hội (X/Twitter) theo từ khóa. Chỉ dùng khi người dùng
+      nói rõ muốn tìm post/tweet/mạng xã hội. Không dùng cho tin tức, bài báo hay tra
+      cứu thông tin chung — dùng lookup cho các việc đó.
     parameters:
       type: object
       properties:
-        query: {type: string, default: "", description: "Từ khóa"}
-        search_type: {type: string, enum: [Latest, Top], default: "Latest", description: "Cách sắp xếp"}
-        limit: {type: integer, default: 5, description: "Số lượng"}
+        query: {type: string, default: "", description: "Từ khóa cần tìm."}
+        search_type: {type: string, enum: [Latest, Top], default: "Latest", description: "Latest = mới nhất theo thời gian; Top = phổ biến nhất."}
+        limit: {type: integer, default: 5, description: "Số bài đăng trả về."}
       required: [query]
 
   - name: lookup
-    description: "Tra cứu thông tin trên internet."
+    description: >-
+      Tìm thông tin trên web: tin tức, bài báo, kiến thức chung. Đây là tool mặc định
+      cho yêu cầu tìm tin hoặc tra cứu khi người dùng không nói rõ là mạng xã hội.
     parameters:
       type: object
       properties:
-        query: {type: string, default: "", description: "Truy vấn"}
-        topic: {type: string, enum: [general, news], default: "general", description: "Phân loại"}
-        timeframe: {type: string, enum: [day, week, month, year], default: "week", description: "Khoảng thời gian"}
-        max_results: {type: integer, default: 5, description: "Số kết quả"}
+        query:
+          type: string
+          default: ""
+          description: >-
+            Chỉ chứa từ khóa chủ đề. Không nhét từ chỉ loại nội dung hay thời gian
+            (news, tin tức, hôm nay, tuần này) vào đây — chúng thuộc về topic và timeframe.
+        topic:
+          type: string
+          enum: [general, news]
+          default: "general"
+          description: 'Đặt "news" khi người dùng hỏi tin tức/thời sự; "general" cho tra cứu thông thường.'
+        timeframe:
+          type: string
+          enum: [day, week, month, year]
+          default: "week"
+          description: 'Khớp mốc thời gian người dùng nói: hôm nay → day, tuần này → week, tháng này → month, năm nay → year.'
+        max_results: {type: integer, default: 5, description: "Số kết quả trả về."}
       required: [query]
 
   - name: fetch

@@ -53,7 +53,7 @@ Nếu chọn provider khác, thay `--provider openrouter` bằng provider đó t
 Preflight:
 
 ```bash
-python scripts/preflight_provider.py --provider openrouter
+python scripts/preflight_provider.py --provider openai
 ```
 
 Preflight chỉ kiểm tra model provider có trả structured tool call. Nó không kiểm tra Tavily, Firecrawl, RapidAPI, arXiv hoặc Telegram; dùng các smoke test bên dưới cho từng tool API.
